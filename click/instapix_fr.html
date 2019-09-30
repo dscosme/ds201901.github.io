@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Nouveau Compte</title>
+   <!--Made with love by Mutiullah Samim -->
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="style.css" rel="stylesheet">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://eu.docusign.net/clickapi/sdk/latest/docusign-click.js"></script>
+   
+	<!--Bootsrap 4 CDN-->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <!--Fontawesome CDN-->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+	<div class="d-flex justify-content-center h-100">
+		<div class="card">
+			<div class="card-header">
+				<h3 id="signInText">INSTAPIX</h3>
+				<div class="d-flex justify-content-end social_icon">
+					<span><i class="fab fa-facebook-square"></i></span>
+					<span><i class="fab fa-google-plus-square"></i></span>
+					<span><i class="fab fa-twitter-square"></i></span>
+				</div>
+			</div>
+			<div class="card-body" id="signUpForm">
+				<form>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-user"></i></span>
+						</div>
+						<input type="text" class="form-control" placeholder="Votre nom d'utilisateur" id="username">
+						
+					</div>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-key"></i></span>
+						</div>
+						<input type="password" class="form-control" placeholder="Mot de passe">
+					</div>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-key"></i></span>
+						</div>
+						<input type="password" class="form-control" placeholder="Re-taper le mot de passe">
+					</div>
+					<!--<div class="row align-items-center remember">
+						<input type="checkbox">Remember Me
+					</div>-->
+					<div class="form-group">
+						<input id="signUpButton" type="button" onclick="showClickWrapper()" value="Cr&#233er" class="btn float-right login_btn">
+						<div id="spin" style="display:none; color:white;margin-left:auto;margin-right:auto">
+							Chargement du contrat de licence... <i class="fas fa-spinner fa-spin"></i>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="card-body" id="signUpFormAgreed" style="display:none; color:white">
+				<form>
+					<div class="input-group form-group">
+						Merci! Votre nouveau compte est actif<br><br>
+						<a id="cochref" href="">Cliquer ici pour obtenir une copie des termes du contrat de licence</>
+					</div>
+				</form>
+			</div>
+			<!--<div class="card-footer">
+				<div class="d-flex justify-content-center links">
+					Don't have an account?<a href="#" onclick="showClickWrapper()">Sign Up</a>
+				</div>
+				<div class="d-flex justify-content-center">
+					<a href="#">Forgot your password?</a>
+				</div>
+			</div>-->
+		</div>
+	</div>
+	</body>
+<script>
+	function callbackFnAgreed(){
+		console.log ("callbackFnAgreed");
+		//Do something
+		document.getElementById ('signUpForm').style.display = "none";
+		document.getElementById ('ds-terms-of-service').style.display = "none";
+		document.getElementById ('signUpFormAgreed').style.display = "block";
+		document.getElementById ('cochref').href = "https://eu.docusign.net/clickapi/v1/accounts/4a2040b0-0ab3-41e3-8b2d-fc7df99bc8da/clickwraps/3bf83a1f-e1fb-474d-88d6-f9aead42c94a/users/" + document.getElementById ('username').value + "/documents/combined";
+	}
+	
+	function callbackFnMustAgree(e){
+		console.log ("callbackFnMustAgree");
+		document.getElementById ("spin").style.display = "none";
+		//Do something
+	}
+	
+	function callbackFnError(e){
+		console.log ("callbackFnError");
+		//Do something
+	}
+
+	function showClickWrapper (){
+		document.getElementById ("signUpButton").style.display = "none";
+		document.getElementById ("spin").style.display = "table";
+		
+		docuSignClick.Clickwrap.render({
+			environment: 'https://eu.docusign.net',
+			accountId: '4a2040b0-0ab3-41e3-8b2d-fc7df99bc8da',
+			clickwrapId: '3bf83a1f-e1fb-474d-88d6-f9aead42c94a',
+			clientUserId: document.getElementById ('username').value,
+			format: 'modal',
+			onAgreed: callbackFnAgreed,
+			onMustAgree: callbackFnMustAgree,
+			onError: callbackFnError
+		}, '#ds-terms-of-service');
+	}
+</script>
+</html>
+<div id="ds-terms-of-service"></div>
+<script src="https://eu.docusign.net/clickapi/sdk/latest/docusign-click.js"></script>
+<script>docuSignClick.Clickwrap.render({
+    environment: 'https://eu.docusign.net',
+    accountId: '4a2040b0-0ab3-41e3-8b2d-fc7df99bc8da',
+    clickwrapId: 'f7757c63-ed85-4e26-bcea-07f30bc4ee21',
+    clientUserId: document.getElementById ('username').value,
+			format: 'modal',
+			onAgreed: callbackFnAgreed,
+			onMustAgree: callbackFnMustAgree,
+			onError: callbackFnError
+		}, '#ds-terms-of-service');</script>
+
+
+
