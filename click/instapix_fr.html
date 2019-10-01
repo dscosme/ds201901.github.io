@@ -86,7 +86,7 @@
 		document.getElementById ('signUpForm').style.display = "none";
 		document.getElementById ('ds-terms-of-service').style.display = "none";
 		document.getElementById ('signUpFormAgreed').style.display = "block";
-		document.getElementById ('cochref').href = "https://eu.docusign.net/clickapi/v1/accounts/4a2040b0-0ab3-41e3-8b2d-fc7df99bc8da/clickwraps/3bf83a1f-e1fb-474d-88d6-f9aead42c94a/users/" + document.getElementById ('username').value + "/documents/combined";
+		document.getElementById ('cochref').href = "https://demo.docusign.net/clickapi/v1/accounts/7414735f-5fa1-486a-81d1-3d2cd0e8e207/clickwraps/9a7230f8-f09d-4c10-abd9-c2881ea21f57/users/" + document.getElementById ('username').value + "/documents/combined";
 	}
 	
 	function callbackFnMustAgree(e){
@@ -105,9 +105,9 @@
 		document.getElementById ("spin").style.display = "table";
 		
 		docuSignClick.Clickwrap.render({
-			environment: 'https://eu.docusign.net',
-			accountId: '4a2040b0-0ab3-41e3-8b2d-fc7df99bc8da',
-			clickwrapId: '3bf83a1f-e1fb-474d-88d6-f9aead42c94a',
+			environment: 'https://demo.docusign.net',
+			accountId: '7414735f-5fa1-486a-81d1-3d2cd0e8e207',
+			clickwrapId: '9a7230f8-f09d-4c10-abd9-c2881ea21f57',
 			clientUserId: document.getElementById ('username').value,
 			format: 'modal',
 			onAgreed: callbackFnAgreed,
@@ -118,17 +118,10 @@
 </script>
 </html>
 <div id="ds-terms-of-service"></div>
-<script src="https://eu.docusign.net/clickapi/sdk/latest/docusign-click.js"></script>
+<script src="https://demo.docusign.net/clickapi/sdk/latest/docusign-click.js"></script>
 <script>docuSignClick.Clickwrap.render({
-    environment: 'https://eu.docusign.net',
-    accountId: '4a2040b0-0ab3-41e3-8b2d-fc7df99bc8da',
-    clickwrapId: 'f7757c63-ed85-4e26-bcea-07f30bc4ee21',
-    clientUserId: document.getElementById ('username').value,
-			format: 'modal',
-			onAgreed: callbackFnAgreed,
-			onMustAgree: callbackFnMustAgree,
-			onError: callbackFnError
-		}, '#ds-terms-of-service');</script>
-
-
-
+    environment: 'https://demo.docusign.net',
+    accountId: '7414735f-5fa1-486a-81d1-3d2cd0e8e207',
+    clickwrapId: '9a7230f8-f09d-4c10-abd9-c2881ea21f57',
+    clientUserId: document.getElementById ('username').value
+  }, '#ds-terms-of-service');</script>
