@@ -1,55 +1,119 @@
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"></head><body>
-  <p>Some NFC stuff - 3</p>
+  <p>Some NFC stuff - 4</p>
   <p id="message"></p>
+  <p id="message2"></p>
 <script>
 try {
   const reader = new NFCReader();
+  reader.onreading = event => {
+    const message = event.message;
+    if (message.records[0].recordType == 'empty') {
+      writer.push({
+        records: [{ recordType: "text", data: 'Hello World' }]
+      });
+      return;
+    }
+
+    console.log(`Read message written by ${message.url}`);
+
+    for (let record of message.records) {
+      switch (record.recordType) {
+        case "text":
+          console.log(`Text: ${record.text()}`);
+          document.getElementById("message").innerHTML = `Text: ${record.text()}`;
+          break;
+        case "url":
+          console.log(`URL: ${record.text()}`);
+          document.getElementById("message").innerHTML = `URL: ${record.text()}`;
+          break;
+        case "json":
+          console.log(`JSON: ${record.json().myProperty}`);
+          document.getElementById("message").innerHTML = `JSON: ${record.json().myProperty}`;
+          break;
+        case "opaque":
+          if (record.mediaType.startsWith('image/')) {
+            const blob = new Blob([record.arrayBuffer()], {type: record.mediaType});
+
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(blob);
+            img.onload = () => window.URL.revokeObjectURL(this.src);
+
+            document.body.appendChild(img);
+          }
+          break;
+      }
+    }
+  };
+
+  reader.scan();
 }
 catch(error) {
-  document.getElementById("message").innerHTML = "No NFC there folks.";
+  document.getElementById("message").innerHTML = "Issue with NFC test one (specs).";
 }
 
-reader.onreading = event => {
-  const message = event.message;
-  if (message.records[0].recordType == 'empty') {
-    writer.push({
-      records: [{ recordType: "text", data: 'Hello World' }]
-    });
-    return;
-  }
-
-  console.log(`Read message written by ${message.url}`);
-
-  for (let record of message.records) {
-    switch (record.recordType) {
-      case "text":
-        console.log(`Text: ${record.text()}`);
-        document.getElementById("message").innerHTML = `Text: ${record.text()}`;
-        break;
-      case "url":
-        console.log(`URL: ${record.text()}`);
-        document.getElementById("message").innerHTML = `URL: ${record.text()}`;
-        break;
-      case "json":
-        console.log(`JSON: ${record.json().myProperty}`);
-        document.getElementById("message").innerHTML = `JSON: ${record.json().myProperty}`;
-        break;
-      case "opaque":
-        if (record.mediaType.startsWith('image/')) {
-          const blob = new Blob([record.arrayBuffer()], {type: record.mediaType});
-
-          const img = document.createElement("img");
-          img.src = URL.createObjectURL(blob);
-          img.onload = () => window.URL.revokeObjectURL(this.src);
-
-          document.body.appendChild(img);
-        }
-        break;
+try {
+  function readWriteNfc() {
+    if ('nfc' in navigator) {
+      navigator.nfc.watch(function (message) {
+          consoleLog("NFC message received from URL " + message.url);
+          if (message.data[0].recordType === 'empty') {
+            navigator.nfc.push([{
+              url: message.url,
+              data: [{
+                recordType: "text",
+                data: 'Hello World'
+              }]
+            }]);
+          }
+          processMessage(message);
+        }, {mode: 'any'})
+        .then(() => consoleLog("Added a watch."))
+        .catch(err => consoleLog("Adding watch failed: " + err.name));
+    } else {
+      consoleLog('NFC API not supported.');
     }
   }
-};
 
-reader.scan();
+  function consoleLog(data) {
+    var logElement = document.getElementById('log');
+    logElement.innerHTML += '\n' + data;
+  }
+
+  function processMessage(message) {
+    message.data.forEach(function (record) {
+      if (record.recordType == "string") {
+        consoleLog('Data is string: ' + record.data);
+      } else if (record.recordType == "json") {
+        processJSON(record.data);
+      } else if (record.recordType == "url") {
+        consoleLog("Data is URL: " + record.data);
+      } else if (record.recordType == "opaque" && record.mediaType == 'image/png') {
+        processPng(record.data);
+      };
+    });
+  }
+
+  function processPng(data) {
+    consoleLog("Known image/png data");
+
+    var img = document.createElement("img");
+    img.src = URL.createObjectURL(new Blob(data, 'image/png'));
+    img.onload = function () {
+      window.URL.revokeObjectURL(this.src);
+    };
+  };
+
+  function processJSON(data) {
+    var obj = JSON.parse(data);
+    consoleLog("JSON data: " + obj.myProperty.toString());
+  };
+
+  readWriteNfc();
+}
+catch(error) {
+  document.getElementById("message2").innerHTML = "Issue with NFC test two (WWCD).";
+}
+
 </script>
 </body></html>
