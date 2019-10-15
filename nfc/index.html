@@ -1,0 +1,44 @@
+<p>Some NFC stuff</p>
+<script>
+const writer = new NFCWriter();
+const reader = new NFCReader();
+
+reader.onreading = event => {
+  const message = event.message;
+  if (message.records[0].recordType == 'empty') {
+    writer.push({
+      records: [{ recordType: "text", data: 'Hello World' }]
+    });
+    return;
+  }
+
+  console.log(`Read message written by ${message.url}`);
+
+  for (let record of message.records) {
+    switch (record.recordType) {
+      case "text":
+        console.log(`Text: ${record.text()}`);
+        break;
+      case "url":
+        console.log(`URL: ${record.text()}`);
+        break;
+      case "json":
+        console.log(`JSON: ${record.json().myProperty}`);
+        break;
+      case "opaque":
+        if (record.mediaType.startsWith('image/')) {
+          const blob = new Blob([record.arrayBuffer()], {type: record.mediaType});
+
+          const img = document.createElement("img");
+          img.src = URL.createObjectURL(blob);
+          img.onload = () => window.URL.revokeObjectURL(this.src);
+
+          document.body.appendChild(img);
+        }
+        break;
+    }
+  }
+};
+
+reader.scan();
+</script>
